@@ -1,6 +1,6 @@
 function [im] = t2_star_reconstruction(ksp,mask,sens1,Phi,n_iterations,K,TE,lambda)
 
-addpath('/home/u11/ciglehart/t2shuffling-support-master/src/utils');
+addpath('/home/iglehartc/Desktop/algorithm/t2shuffling-support/src/utils');
 
 [ny, nz, nc, nE] = size(ksp);
 
