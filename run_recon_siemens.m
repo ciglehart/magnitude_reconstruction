@@ -3,7 +3,7 @@ function im = run_recon_siemens()
 lambda = 0.01;
 K = 4;
 TE = 0.00591;
-n_iterations = 10;
+n_iterations = 20;
 Ny = 256;
 Nx = 256;
 nc = 8;
@@ -15,10 +15,11 @@ im = [];
 mask = [];
 bas = [];
 
-load('../phase_reconstruction/mask_acc_4.mat');
+addpath('/Users/charlesiglehart/Desktop/t2shuffling-support/src/utils');
+load('../phase_reconstruction/mask_acc_8.mat');
 load('../phase_reconstruction/sens_maps_256_256_8.mat');
 load('temporal_basis_1e-1ms_2000ms_ETL_8.mat');
-load('../../data/te_images.mat');
+load('/Users/charlesiglehart/Desktop/phase_cycling_reconstruction/te_images.mat');
 
 teIms = single(zeros(Ny,Nx,nc,nE));
 teImages = single(im);
