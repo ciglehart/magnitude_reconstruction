@@ -1,14 +1,17 @@
 function im = run_recon_siemens()
 
+addpath('/home/iglehartc/Desktop/algorithm/t2shuffling-support/src/utils');
+
 lambda = 0.01;
 K = 4;
 TE = 0.00591;
-n_iterations = 10;
+n_iterations = 20;
 Ny = 256;
 Nx = 256;
 nc = 8;
 nE = 8;
 slice = 32;
+nw = 16;
 
 maps = [];
 im = [];
@@ -41,16 +44,7 @@ for ii = 1:nE
     for jj = 1:nc
         
         teIms(:,:,jj,ii) = teImages(:,:,ii).*maps(:,:,jj);
-        
-    end
-end
-
-for ii = 1:nE
-    for jj = 1:nc
-        
-        coil_im = squeeze(teIms(:,:,jj,ii));
-        k(:,:,jj,ii) = fft2c(coil_im);
-        
+        k(:,:,jj,ii) = fft2c(squeeze(teIms(:,:,jj,ii)));
     end
 end
 

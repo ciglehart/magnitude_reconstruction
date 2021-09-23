@@ -79,10 +79,10 @@ lsqr_ops.tol = 1e-4;
 
 alpha_ref = RefValue;
 %alpha_ref.data = zeros(ny, nz, K);
-alpha_ref.data = zeros(ny, nz, nE);
+alpha_ref.data = zeros(ny, nz, 2);
 
 %history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, AHA, ksp_adj, @admm_callback);
-history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, K_adj, Theta, @admm_callback);
+history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, AHA, Theta, @admm_callback);
 
 disp(' ');
 
