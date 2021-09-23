@@ -18,10 +18,11 @@ im = [];
 mask = [];
 bas = [];
 
-load('../phase_reconstruction/mask_acc_4.mat');
+addpath('/Users/charlesiglehart/Desktop/t2shuffling-support/src/utils');
+load('../phase_reconstruction/mask_acc_8.mat');
 load('../phase_reconstruction/sens_maps_256_256_8.mat');
 load('temporal_basis_1e-1ms_2000ms_ETL_8.mat');
-load('../../data/te_images.mat');
+load('/Users/charlesiglehart/Desktop/phase_cycling_reconstruction/te_images.mat');
 
 teIms = single(zeros(Ny,Nx,nc,nE));
 teImages = single(im);

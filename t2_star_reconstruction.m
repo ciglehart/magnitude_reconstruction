@@ -1,6 +1,6 @@
 function [im] = t2_star_reconstruction(ksp,mask,sens1,Phi,n_iterations,K,TE,lambda)
 
-addpath('/home/iglehartc/Desktop/algorithm/t2shuffling-support/src/utils');
+addpath('/Users/charlesiglehart/Desktop/phase_cycling_reconstruction/te_images.mat');
 
 [ny, nz, nc, nE] = size(ksp);
 
@@ -30,6 +30,9 @@ F_adj = @(y) ifft2c(y);
 % Sampling mask
 P_for = @(y) bsxfun(@times, y, masks);
 %ksp = P_for(ksp);
+
+%Apply sampling mask
+ksp = P_for(ksp);
 
 % Full forward model
 A_for = @(a) P_for(T_for(F_for(S_for(a))));
