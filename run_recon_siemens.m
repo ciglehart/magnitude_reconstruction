@@ -2,7 +2,7 @@ function im = run_recon_siemens()
 
 addpath('/home/iglehartc/Desktop/algorithm/t2shuffling-support/src/utils');
 
-lambda = 0.01;
+lambda = 0.001;
 K = 4;
 TE = 0.00591;
 n_iterations = 20;
@@ -22,7 +22,7 @@ addpath('/Users/charlesiglehart/Desktop/t2shuffling-support/src/utils');
 load('../phase_reconstruction/mask_acc_8.mat');
 load('../phase_reconstruction/sens_maps_256_256_8.mat');
 load('temporal_basis_1e-1ms_2000ms_ETL_8.mat');
-load('/Users/charlesiglehart/Desktop/phase_cycling_reconstruction/te_images.mat');
+load('/home/iglehartc/Desktop/data/te_images.mat');
 
 teIms = single(zeros(Ny,Nx,nc,nE));
 teImages = single(im);

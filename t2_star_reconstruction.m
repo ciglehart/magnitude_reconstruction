@@ -20,8 +20,8 @@ S_adj = @(as) squeeze(sum(bsxfun(@times, conj(sens), as), 3));
 SHS = @(a) S_adj(S_for(a));
 
 % Temporal projection operator
-T_for = @(a) temporal_forward(a, Phi);
-T_adj = @(x) temporal_adjoint(x, Phi);
+%T_for = @(a) temporal_forward(a, Phi);
+%T_adj = @(x) temporal_adjoint(x, Phi);
 
 % Fourier transform
 F_for = @(x) fft2c(x);
@@ -29,21 +29,24 @@ F_adj = @(y) ifft2c(y);
 
 % Sampling mask
 P_for = @(y) bsxfun(@times, y, masks);
-%ksp = P_for(ksp);
 
 %Apply sampling mask
 ksp = P_for(ksp);
 
-% Full forward model
-A_for = @(a) P_for(T_for(F_for(S_for(a))));
-A_adj = @(y) S_adj(F_adj(T_adj(P_for(y))));
-AHA = @(a) S_adj(F_adj(T_adj(P_for(T_for(F_for(S_for(a))))))); % slightly faster
-
 % Phase forward model
-K_adj = @(a) phase_temporal_forward(a,nE);
+Psi_for = @(a) phase_temporal_forward(a,nE);
+Psi_adj = @(a) phase_temporal_adjoint(a);
 
 %Phase unwrap operator 
-U_adj = @(a) phase_unwrap(a);
+U = @(a) phase_unwrap(a);
+
+% Full forward model
+%A_for = @(a) P_for(T_for(F_for(S_for(a))));
+A_for = @(a) P_for(F_for(S_for(Psi_for(a))));
+%A_adj = @(y) S_adj(F_adj(T_adj(P_for(y))));
+A_adj = @(y) Psi_adj(U(angle(S_adj(F_adj(P_for(y))))));
+%AHA = @(a) S_adj(F_adj(T_adj(P_for(T_for(F_for(S_for(a))))))); % slightly faster
+AHA = @(a) A_adj(A_for(a));
 
 %% scaling
 tmp = dimnorm(ifft2c(bsxfun(@times, ksp, masks)), 3);
@@ -64,15 +67,12 @@ fprintf('\nScaling: %f\n\n', scaling);
 ksp = ksp ./ scaling;
 ksp_adj = A_adj(ksp);
 
-%Unwrapped phase
-Theta = U_adj(angle(S_adj(F_adj(P_for(ksp)))));
-
 %% ADMM
 
 iter_ops.max_iter = n_iterations;
 iter_ops.rho = 0.5;
 %iter_ops.objfun = @(a, sv, lam) 0.5*norm_mat(ksp - A_for(a))^2 + lam*sum(sv(:));
-iter_ops.objfun = @(a, sv, lam) 0.5*norm_mat(Theta - K_adj(a))^2 + lam*sum(sv(:));
+iter_ops.objfun = @(a, sv, lam) 0.5*norm_mat(A_adj(ksp) - a)^2 + lam*sum(sv(:));
 
 llr_ops.lambda = lambda;
 llr_ops.block_dim = [8,2];
@@ -82,18 +82,16 @@ lsqr_ops.tol = 1e-4;
 
 alpha_ref = RefValue;
 %alpha_ref.data = zeros(ny, nz, K);
-alpha_ref.data = zeros(ny, nz, nE);
+alpha_ref.data = ksp_adj;
 
 %history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, AHA, ksp_adj, @admm_callback);
-history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, K_adj, Theta, @admm_callback);
+history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, AHA, ksp_adj, @admm_callback);
 
 disp(' ');
 
 %% Project and re-scale
 alpha = alpha_ref.data;
-im = T_for(alpha);
-
-disp('Rescaling...')
-im = im * scaling;
+%im = T_for(alpha);
+im = angle(exp(1j*scaling*Psi_for(alpha)));
 
 end
