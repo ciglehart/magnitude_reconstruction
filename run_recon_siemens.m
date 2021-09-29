@@ -1,11 +1,11 @@
-function im = run_recon_siemens()
+function im = run_recon_siemens(lambda,n_iterations,savefile)
 
 addpath('/home/iglehartc/Desktop/algorithm/t2shuffling-support/src/utils');
 
-lambda = 0.001;
+%lambda = 0.001;
 K = 4;
 TE = 0.00591;
-n_iterations = 20;
+%n_iterations = 5;
 Ny = 256;
 Nx = 256;
 nc = 8;
@@ -22,7 +22,7 @@ addpath('/Users/charlesiglehart/Desktop/t2shuffling-support/src/utils');
 load('../phase_reconstruction/mask_acc_8.mat');
 load('../phase_reconstruction/sens_maps_256_256_8.mat');
 load('temporal_basis_1e-1ms_2000ms_ETL_8.mat');
-load('/home/iglehartc/Desktop/data/te_images.mat');
+load('te_images.mat');
 
 teIms = single(zeros(Ny,Nx,nc,nE));
 teImages = single(im);
@@ -52,5 +52,5 @@ end
 Phi = bas(:,1:K);
 
 im = t2_star_reconstruction(k,m,s,Phi,n_iterations,K,TE,lambda);
-
+save(savefile,'im');
 end

@@ -1,58 +1,35 @@
-r = run_recon_siemens();
+%function output = show_results()
+threshold = 0.1;
+nE = 8;
+load('brain_mask');
+load('te_images');
+truth = unwrap(angle(squeeze(im(:,:,32,:))),[],3);
+load('recon_lambda_1e-3_acc_8');
+recon = unwrap(im,[],3);
 
-load('/Users/charlesiglehart/Desktop/phase_cycling_reconstruction/te_images.mat');
-im = squeeze(im(:,:,32,:));
+err = 1-cos(recon-truth);
+err(abs(err)>threshold) = threshold;
 
-img_m = zeros(256,256*4);
-img_mr = zeros(256,256*4);
-img_p = zeros(256,256*4);
-img_pr = zeros(256,256*4);
+img = zeros(768,1024,3);
+cmap = parula(256);
 
-k = 4;
+ind = find(repmat(mask,1,1,nE)>0);
+truth_vals = truth(ind);
+recon_vals = recon(ind);
+val_range = [min([min(truth_vals(:)),min(recon_vals(:))]),max([max(truth_vals(:)),max(recon_vals(:))])];
 
-img_m(1:256,1:256) = rot90(squeeze(abs(im(:,:,1+k))));
-img_m(1:256,257:512) = rot90(squeeze(abs(im(:,:,2+k))));
-img_m(1:256,513:768) = rot90(squeeze(abs(im(:,:,3+k))));
-img_m(1:256,769:1024) = rot90(squeeze(abs(im(:,:,4+k))));
+for i = 1:nE
+    img(1:256,((i-1)*256 + 1):256*i,:) = rgb_image(rot90(truth(:,:,i)),rot90(mask),cmap,[0,0,0],val_range);
+    img(257:512,((i-1)*256 + 1):256*i,:) = rgb_image(rot90(recon(:,:,i)),rot90(mask),cmap,[0,0,0],val_range);
+    img(513:768,((i-1)*256 + 1):256*i,:) = rgb_image(rot90(err(:,:,i)),rot90(mask),cmap,[0,0,0],[]);
+end
 
-img_mr(1:256,1:256) = rot90(squeeze(abs(r(:,:,1+k))));
-img_mr(1:256,257:512) = rot90(squeeze(abs(r(:,:,2+k))));
-img_mr(1:256,513:768) = rot90(squeeze(abs(r(:,:,3+k))));
-img_mr(1:256,769:1024) = rot90(squeeze(abs(r(:,:,4+k))));
-
-img_p(1:256,1:256) = rot90(squeeze(angle(im(:,:,1+k))));
-img_p(1:256,257:512) = rot90(squeeze(angle(im(:,:,2+k))));
-img_p(1:256,513:768) = rot90(squeeze(angle(im(:,:,3+k))));
-img_p(1:256,769:1024) = rot90(squeeze(angle(im(:,:,4+k))));
-
-img_pr(1:256,1:256) = rot90(squeeze(angle(r(:,:,1+k))));
-img_pr(1:256,257:512) = rot90(squeeze(angle(r(:,:,2+k))));
-img_pr(1:256,513:768) = rot90(squeeze(angle(r(:,:,3+k))));
-img_pr(1:256,769:1024) = rot90(squeeze(angle(r(:,:,4+k))));
-
-imagesc(img_m);
+f = figure;
+f.Position = [100,100,1200,800];
+imagesc(img);
 axis equal;
-axis off;
 axis tight;
-colormap(gray);
-
-figure;
-imagesc(img_mr);
-axis equal;
 axis off;
-axis tight;
-colormap(gray);
-
-figure;
-imagesc(img_p);
-axis equal;
-axis off;
-axis tight;
-colormap(gray);
-
-figure;
-imagesc(img_pr);
-axis equal;
-axis off;
-axis tight;
-colormap(gray);
+custom_colorbar(val_range(1),val_range(2),0,cmap,12);
+err = err(ind);
+custom_colorbar(min(err(:)),max(err(:)),0,cmap,12);
