@@ -2,9 +2,9 @@
 threshold = 0.1;
 nE = 8;
 load('brain_mask');
-load('te_images');
+load('teImages');
 truth = unwrap(angle(squeeze(im(:,:,32,:))),[],3);
-load('recon_lambda_1e-3_acc_8');
+load('recon_lambda_1e-3_acc_6');
 recon = unwrap(im,[],3);
 
 err = 1-cos(recon-truth);

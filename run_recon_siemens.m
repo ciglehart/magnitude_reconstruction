@@ -1,6 +1,6 @@
-function im = run_recon_siemens(lambda,n_iterations,savefile)
+function im = run_recon_siemens(lambda,n_iterations,maskfile,savefile)
 
-addpath('/home/iglehartc/Desktop/algorithm/t2shuffling-support/src/utils');
+setPath;
 
 %lambda = 0.001;
 K = 4;
@@ -18,11 +18,10 @@ im = [];
 mask = [];
 bas = [];
 
-addpath('/Users/charlesiglehart/Desktop/t2shuffling-support/src/utils');
-load('../phase_reconstruction/mask_acc_8.mat');
-load('../phase_reconstruction/sens_maps_256_256_8.mat');
-load('temporal_basis_1e-1ms_2000ms_ETL_8.mat');
-load('te_images.mat');
+load(maskfile);
+load('sens_maps_256_256_8');
+load('temporal_basis_1e-1ms_2000ms_ETL_8');
+load('teImages');
 
 teIms = single(zeros(Ny,Nx,nc,nE));
 teImages = single(im);

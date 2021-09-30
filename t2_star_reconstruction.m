@@ -85,7 +85,7 @@ alpha_ref = RefValue;
 alpha_ref.data = ksp_adj;
 
 %history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, AHA, ksp_adj, @admm_callback);
-history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, AHA, ksp_adj, @admm_callback);
+history = iter_admm(alpha_ref, iter_ops, llr_ops, lsqr_ops, AHA, ksp_adj);
 
 disp(' ');
 
