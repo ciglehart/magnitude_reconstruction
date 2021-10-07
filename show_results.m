@@ -1,10 +1,9 @@
-%function output = show_results()
-threshold = 0.1;
+function output = show_results(filename,threshold)
 nE = 8;
 load('brain_mask');
 load('teImages');
 truth = unwrap(angle(squeeze(im(:,:,32,:))),[],3);
-load('recon_lambda_1e-3_acc_6');
+load(filename);
 recon = unwrap(im,[],3);
 
 err = 1-cos(recon-truth);
@@ -33,3 +32,4 @@ axis off;
 custom_colorbar(val_range(1),val_range(2),0,cmap,12);
 err = err(ind);
 custom_colorbar(min(err(:)),max(err(:)),0,cmap,12);
+end
