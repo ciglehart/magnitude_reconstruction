@@ -2,7 +2,7 @@ clear all;
 close all;
 clc;
 
-load('te_images');
+load('teImages');
 load('brain_mask');
 slice = 32;
 nE = 8;
